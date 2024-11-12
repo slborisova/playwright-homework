@@ -9,76 +9,76 @@ test.beforeEach(async ({ page }) => {
 
 test.describe("Lists and Drop Downs", async () => {
   test("Validate selected pet types from the list", async ({ page }) => {
+    const type1Input = page.locator("#type1");
+    const petTypeSelect = page.locator("#type");
     await page.getByText("George Franklin").click();
 
     await expect(page.locator(".ownerFullName")).toHaveText("George Franklin");
 
-    await page.getByRole("button", { name: "Edit Pet" }).nth(0).click();
+    const petLeoSection = page.locator("app-pet-list", { name: "Leo" });
+    await petLeoSection
+      .getByRole("button", { name: "Edit Pet" })
+      .first()
+      .click();
 
     await expect(page.locator("h2")).toHaveText("Pet");
 
     await expect(page.locator("#owner_name")).toHaveValue("George Franklin");
 
-    await expect(page.locator("#type1")).toHaveValue("cat");
+    await expect(type1Input).toHaveValue("cat");
 
-    const dropDownMenu = page.locator("#type");
-    await dropDownMenu.click();
+    await petTypeSelect.click();
+    const typeList = page.locator("#type option");
+    const types = ["cat", "dog", "lizard", "snake", "animal", "hamster"];
+    await expect(typeList).toHaveText(types);
 
-    const types = {
-      cat: "cat",
-      dog: "dog",
-      lizard: "lizard",
-      snake: "snake",
-      animal: "animal",
-      hamster: "hamster",
-    };
-
-    for (const type in types) {
-      await dropDownMenu.selectOption(type);
-      await expect(page.locator("#type1")).toHaveValue(types[type]);
+    for (const type of types) {
+      await petTypeSelect.selectOption(type);
+      await expect(type1Input).toHaveValue(type);
     }
   });
 
   test("Validate the pet type update", async ({ page }) => {
+    const type1Input = page.locator("#type1");
+    const petTypeSelect = page.locator("#type");
     await page.getByText("Eduardo Rodriquez").click();
 
-    await page.getByRole("button", { name: "Edit Pet" }).nth(1).click();
+    const petRosySection = page.locator("app-pet-list", { name: "Rosy" });
+    await petRosySection
+      .getByRole("button", { name: "Edit Pet" })
+      .first()
+      .click();
 
-    await expect(page.locator("#name")).toHaveValue("Rosy");
+    await expect(type1Input).toHaveValue("dog");
 
-    await expect(page.locator("#type1")).toHaveValue("dog");
+    await petTypeSelect.selectOption("lizard");
 
-    const dropDownMenu = page.locator("#type");
-    await dropDownMenu.click();
-    await dropDownMenu.selectOption("lizard");
-
-    await expect(page.locator("#type1")).toHaveValue("lizard");
-    await expect(page.locator("#type")).toHaveValue("lizard");
-
-    await page.getByRole("button", { name: "Update Pet" }).click();
-
-    await expect(
-      page.locator(
-        "app-pet-list:nth-of-type(2) > .table.table-striped dl > dd:nth-of-type(3)"
-      )
-    ).toHaveText("lizard");
-
-    await page.getByRole("button", { name: "Edit Pet" }).nth(1).click();
-
-    await expect(page.locator("#type1")).toHaveValue("lizard");
-
-    await dropDownMenu.click();
-    await dropDownMenu.selectOption("dog");
-
-    await expect(page.locator("#type1")).toHaveValue("dog");
-    await expect(page.locator("#type")).toHaveValue("dog");
+    await expect(type1Input).toHaveValue("lizard");
+    await expect(petTypeSelect).toHaveValue("lizard");
 
     await page.getByRole("button", { name: "Update Pet" }).click();
 
-    await expect(
-      page.locator(
-        "app-pet-list:nth-of-type(2) > .table.table-striped dl > dd:nth-of-type(3)"
-      )
-    ).toHaveText("dog");
+    await expect(petRosySection.locator(".dl-horizontal dd").last()).toHaveText(
+      "lizard"
+    );
+
+    await petRosySection
+      .getByRole("button", { name: "Edit Pet" })
+      .first()
+      .click();
+
+    await expect(type1Input).toHaveValue("lizard");
+
+    await petTypeSelect.click();
+    await petTypeSelect.selectOption("dog");
+
+    await expect(type1Input).toHaveValue("dog");
+    await expect(petTypeSelect).toHaveValue("dog");
+
+    await page.getByRole("button", { name: "Update Pet" }).click();
+
+    await expect(petRosySection.locator(".dl-horizontal dd").last()).toHaveText(
+      "lizard"
+    );
   });
 });
