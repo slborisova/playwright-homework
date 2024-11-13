@@ -9,38 +9,35 @@ test.beforeEach(async ({ page }) => {
 
 test.describe("Lists and Drop Downs", async () => {
   test("Validate selected pet types from the list", async ({ page }) => {
-    const type1Input = page.locator("#type1");
-    const petTypeSelect = page.locator("#type");
+    const petTypeInputField = page.locator("#type1");
+    const petTypeDropdownMenu = page.locator("#type");
     await page.getByText("George Franklin").click();
 
     await expect(page.locator(".ownerFullName")).toHaveText("George Franklin");
 
     const petLeoSection = page.locator("app-pet-list", { name: "Leo" });
-    await petLeoSection
-      .getByRole("button", { name: "Edit Pet" })
-      .first()
-      .click();
+    await petLeoSection.getByRole("button", { name: "Edit Pet" }).click();
 
     await expect(page.locator("h2")).toHaveText("Pet");
 
     await expect(page.locator("#owner_name")).toHaveValue("George Franklin");
 
-    await expect(type1Input).toHaveValue("cat");
+    await expect(petTypeInputField).toHaveValue("cat");
 
-    await petTypeSelect.click();
+    await petTypeDropdownMenu.click();
     const typeList = page.locator("#type option");
     const types = ["cat", "dog", "lizard", "snake", "animal", "hamster"];
     await expect(typeList).toHaveText(types);
 
     for (const type of types) {
-      await petTypeSelect.selectOption(type);
-      await expect(type1Input).toHaveValue(type);
+      await petTypeDropdownMenu.selectOption(type);
+      await expect(petTypeInputField).toHaveValue(type);
     }
   });
 
   test("Validate the pet type update", async ({ page }) => {
-    const type1Input = page.locator("#type1");
-    const petTypeSelect = page.locator("#type");
+    const petTypeInputField = page.locator("#type1");
+    const petTypeDropdownMenu = page.locator("#type");
     await page.getByText("Eduardo Rodriquez").click();
 
     const petRosySection = page.locator("app-pet-list", { name: "Rosy" });
@@ -49,12 +46,12 @@ test.describe("Lists and Drop Downs", async () => {
       .first()
       .click();
 
-    await expect(type1Input).toHaveValue("dog");
+    await expect(petTypeInputField).toHaveValue("dog");
 
-    await petTypeSelect.selectOption("lizard");
+    await petTypeDropdownMenu.selectOption("lizard");
 
-    await expect(type1Input).toHaveValue("lizard");
-    await expect(petTypeSelect).toHaveValue("lizard");
+    await expect(petTypeInputField).toHaveValue("lizard");
+    await expect(petTypeDropdownMenu).toHaveValue("lizard");
 
     await page.getByRole("button", { name: "Update Pet" }).click();
 
@@ -67,13 +64,13 @@ test.describe("Lists and Drop Downs", async () => {
       .first()
       .click();
 
-    await expect(type1Input).toHaveValue("lizard");
+    await expect(petTypeInputField).toHaveValue("lizard");
 
-    await petTypeSelect.click();
-    await petTypeSelect.selectOption("dog");
+    await petTypeDropdownMenu.click();
+    await petTypeDropdownMenu.selectOption("dog");
 
-    await expect(type1Input).toHaveValue("dog");
-    await expect(petTypeSelect).toHaveValue("dog");
+    await expect(petTypeInputField).toHaveValue("dog");
+    await expect(petTypeDropdownMenu).toHaveValue("dog");
 
     await page.getByRole("button", { name: "Update Pet" }).click();
 
