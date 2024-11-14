@@ -16,8 +16,8 @@ test.describe("Dialog Boxes", async () => {
     await nameInputField.fill("pig");
     await page.getByRole("button", { name: "Save" }).click();
 
-    const petTypesTableInputFields = page.locator("table tr td input");
-    await expect(petTypesTableInputFields.last()).toHaveValue("pig");
+    const petTypesTableInputFields = page.locator("table tr td input").last();
+    await expect(petTypesTableInputFields).toHaveValue("pig");
 
     page.on("dialog", (dialog) => {
       expect(dialog.message()).toEqual("Delete the pet type?");
@@ -29,6 +29,6 @@ test.describe("Dialog Boxes", async () => {
       .last()
       .getByRole("button", { name: "Delete" })
       .click();
-    await expect(petTypesTableInputFields.last()).not.toHaveValue("pig");
+    await expect(petTypesTableInputFields).not.toHaveValue("pig");
   });
 });
