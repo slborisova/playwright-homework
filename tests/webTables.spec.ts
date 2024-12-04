@@ -31,13 +31,13 @@ test.describe("Web Tables-Owners", async () => {
       await page.waitForResponse((response) =>
         response.url().includes(`/api/owners?lastName=${ownerLastName}`)
       );
-      const ownerFullNameRows = page.locator("tbody tr");
+      const ownerFullNameCells = page.locator(".ownerFullName");
 
-      for (let row of await ownerFullNameRows.all()) {
+      for (let ownerCells of await ownerFullNameCells.all()) {
         if (ownerLastName == "Playwright") {
           expect(await page.getByRole("table").textContent()).toContain('No owners with LastName starting with "Playwright"');
         } else {
-          expect(await row.locator("td").first().textContent()).toContain(ownerLastName);
+          expect(ownerCells).toContainText(ownerLastName);
         }
       }
     }
