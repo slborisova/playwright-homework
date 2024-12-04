@@ -21,27 +21,26 @@ test.describe("Web Tables-Owners", async () => {
   test("Validate search by Last Name", async ({ page }) => {
     const lastNameInputfield = page.getByRole("textbox");
     const findOwnerButton = page.getByRole("button", { name: "Find Owner" });
-    const ownerLastNames = ["Black", "Davis", "Es"];
+    const ownerLastNames = ["Black", "Davis", "Es", "Playwright"];
 
-    for(let ownerLastName of ownerLastNames){
-
+    for (let ownerLastName of ownerLastNames) {
+      await lastNameInputfield.click();
       await lastNameInputfield.clear();
       await lastNameInputfield.fill(ownerLastName);
       await findOwnerButton.click();
-      await page.waitForTimeout(1000);
-
+      await page.waitForResponse((response) =>
+        response.url().includes(`/api/owners?lastName=${ownerLastName}`)
+      );
       const ownerFullNameRows = page.locator("tbody tr");
 
-    for (const row of await ownerFullNameRows.all()) {
-      const fullName = await row.locator("td").first().textContent();
-      
-      if (ownerLastName == "Playwright") {
-          await expect(page.getByText('No owners with LastName starting with "Playwright"')).toBeVisible();
-      } else {
-          expect(fullName).toContain(ownerLastName);
+      for (let row of await ownerFullNameRows.all()) {
+        if (ownerLastName == "Playwright") {
+          expect(await page.getByRole("table").textContent()).toContain('No owners with LastName starting with "Playwright"');
+        } else {
+          expect(await row.locator("td").first().textContent()).toContain(ownerLastName);
+        }
       }
-  }
-}
+    }
   });
 
   test("Validate phone number and pet name on the Owner Information page", async ({page}) => {
@@ -61,10 +60,10 @@ test.describe("Web Tables-Owners", async () => {
     await expect(page.locator("tbody tr").filter({ hasText: "Madison" })).toHaveCount(4);
 
     for (let row of await madisonPetRows.all()) {
-      const name = (await row.locator("td").last().textContent());
+      const name = await row.locator("td").last().textContent();
       pets.push(name.trim());
     }
-    expect(pets).toEqual(["Leo", "George", "Mulligan", "Freddy"])
+    expect(pets).toEqual(["Leo", "George", "Mulligan", "Freddy"]);
   });
 });
 
@@ -117,7 +116,11 @@ test.describe("Web Tables-Specialties", async () => {
   test("Validate specialty lists", async ({ page }) => {
     await page.getByRole("button", { name: "Add" }).click();
     await page.locator("#name").fill("oncology");
+
     await page.getByRole("button", { name: "Save" }).click();
+    await page.waitForResponse((response) =>
+      response.url().includes(`api/specialties`)
+    );
 
     const specialties = [];
     const specialtyRows = page.locator("tbody tr input");
@@ -137,7 +140,7 @@ test.describe("Web Tables-Specialties", async () => {
 
     const allBoxes = await page.locator(".dropdown-content div").allTextContents();
 
-    await expect(allBoxes).toEqual(['radiology', 'surgery','dentistry', 'New specialty', 'oncology']);
+    expect(allBoxes).toEqual(specialties);
 
     await page.getByRole("checkbox", { name: "oncology" }).check();
     await page.getByRole("checkbox", { name: "New specialty" }).uncheck();
@@ -149,7 +152,7 @@ test.describe("Web Tables-Specialties", async () => {
     await page.getByRole("link", { name: "Specialties" }).click();
 
     await page.getByRole("button", { name: "Delete" }).last().click();
-  
+
     await page.getByText("Veterinarians").click();
     await page.getByText("All").click();
     await expect(targetRow.locator("td").nth(1)).toBeEmpty();
