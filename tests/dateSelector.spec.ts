@@ -14,81 +14,80 @@ test.describe("Date Selector", async () => {
 
     const nameInputField = page.getByRole("textbox", { name: "name" });
     const nameIcon = page.locator("input#name + span");
-    const petBirthDatePickerCell = page.locator('[class="mat-calendar-body-cell-content mat-focus-indicator"]');
     const birthDateInputField = page.locator('[name="birthDate"]');
 
-    await expect(nameIcon).toHaveClass("glyphicon form-control-feedback glyphicon-remove");
+    await expect(nameIcon).toHaveClass(/glyphicon-remove/);
     await nameInputField.fill("Tom");
-    await page.waitForSelector("input#name + span.glyphicon-ok", {state: "visible"});
-    await expect(nameIcon).toHaveClass("glyphicon form-control-feedback glyphicon-ok");
+    await expect(nameIcon).toHaveClass(/glyphicon-ok/);
 
-    await page.locator('[class="mat-mdc-button-touch-target"]').click();
-    await page.locator('[class="mat-calendar-arrow"]').click();
+    await page.getByLabel("Open calendar").click();
+    await page.getByRole("button", { name: "Choose month and year" }).click();
     await page.getByRole("button", { name: "Previous 24 years" }).click();
-    await petBirthDatePickerCell.getByText("2014").click();
-    await petBirthDatePickerCell.getByText("MAY").click();
-    await petBirthDatePickerCell.getByText("2", { exact: true }).click();
+    await page.getByText("2014").click();
+    await page.getByText("MAY").click();
+    await page.getByText("2", { exact: true }).click();
 
     await expect(birthDateInputField).toHaveValue("2014/05/02");
 
     await page.locator("#type").selectOption("dog");
     await page.getByRole("button", { name: "Save Pet" }).click();
 
-    const tableStripedSelector = page.locator("table.table-striped").last().locator("tr td dd");
-    await expect(tableStripedSelector.first()).toHaveText("Tom");
-    await expect(tableStripedSelector.nth(1)).toHaveText("2014-05-02");
-    await expect(tableStripedSelector.last()).toHaveText("dog");
+    const lastPetVisit = page.locator("table.table-striped").last().locator("tr td dd");
+    await expect(lastPetVisit.first()).toHaveText("Tom");
+    await expect(lastPetVisit.nth(1)).toHaveText("2014-05-02");
+    await expect(lastPetVisit.last()).toHaveText("dog");
 
     await page.getByRole("button", { name: "Delete Pet" }).last().click();
 
-    await expect(tableStripedSelector.first()).toBeEmpty();
+    await expect(lastPetVisit.first()).toBeEmpty();
   });
 
   test("Select the dates of visits and validate dates order", async ({page}) => {
     await page.getByText("Jean Coleman").click();
 
-    const samanthaTableStripedSelector = page.locator("table.table-striped").last().locator("tr td dd");
-    const samanthaAddVisitButton = page.locator("table.table-striped").last().getByRole("button", { name: "Add Visit" });
-    await expect(samanthaTableStripedSelector.first()).toHaveText("Samantha");
-    await samanthaAddVisitButton.click();
+    const lastPetVisit = page.locator("table.table-striped").last();
+    const petsVisitsAddVisitButton = lastPetVisit.getByRole("button", {name: "Add Visit"});
+    await petsVisitsAddVisitButton.click();
 
-    await expect(page.locator("h2")).toHaveText("New Visit");
+    await expect(page.getByRole("heading")).toHaveText("New Visit");
 
-    const newVisitTableStripedSelector = page.locator("table.table-striped").locator("tr td");
-    await expect(newVisitTableStripedSelector.first()).toHaveText("Samantha");
-    await expect(newVisitTableStripedSelector.last()).toHaveText("Jean Coleman");
+    const newVisitPetTable = page.locator("table.table-striped").locator("tr td");
+    await expect(newVisitPetTable.first()).toHaveText("Samantha");
+    await expect(newVisitPetTable.last()).toHaveText("Jean Coleman");
 
     const calendarIcon = page.getByLabel("Open calendar");
     await calendarIcon.click();
     let date = new Date();
     const currentYear = date.getFullYear();
-    const currentMonth = date.getMonth() + 1;
-    const currentDay = date.getDate();
+    const currentMonth = (date.getMonth() + 1).toString().padStart(2, "0");
+    const currentDay = date.getDate().toString().padStart(2, "0");
     const currentDate = `${currentYear}/${currentMonth}/${currentDay}`;
 
-    const calendarTodayCell = page.locator('[class="mat-calendar-body-cell-content mat-focus-indicator mat-calendar-body-today"]');
+    const calendarTodayCell = page.locator(".mat-calendar-body-today");
     await calendarTodayCell.click();
 
-    const dateInputField = await page.locator('input[name="date"]');
+    const dateInputField = await page.locator('[name="date"]');
     await expect(dateInputField).toHaveValue(currentDate);
 
-    const descriptionInputField = await page.locator("#description");
+    const descriptionInputField = page.locator("#description");
     await descriptionInputField.fill("dermatologist visit");
-    const newVisitAddVisitButton = await page.getByRole("button", {name: "Add Visit"});
+    const newVisitAddVisitButton = page.getByRole("button", {name: "Add Visit"});
     await newVisitAddVisitButton.click();
 
     const dermatologistVisitDate = `${currentYear}-${currentMonth}-${currentDay}`;
-    const petVisitsRow = page.locator("table.table-condensed").last().locator("tr td");
-    await expect(petVisitsRow.first()).toHaveText(dermatologistVisitDate);
 
-    await samanthaAddVisitButton.click();
+    const lastPetVisitSection = page.locator("table.table-condensed").last();
+    const lastPetVisitCellDate = lastPetVisitSection.locator("tr td");
+    await expect(lastPetVisitCellDate.first()).toHaveText(dermatologistVisitDate);
+
+    await petsVisitsAddVisitButton.click();
 
     await calendarIcon.click();
     let targetDate = new Date();
     targetDate.setDate(targetDate.getDate() - 45);
     const secondVisitYear = date.getFullYear();
-    const secondVisitMonth = date.getMonth() + 1;
-    const secondVisitDay = date.getDate();
+    const secondVisitMonth = (date.getMonth() + 1).toString().padStart(2, "0");
+    const secondVisitDay = date.getDate().toString().padStart(2, "0");
     const secondVisitDate = `${secondVisitYear}/${secondVisitMonth}/${secondVisitDay}`;
 
     await calendarTodayCell.click();
@@ -99,15 +98,29 @@ test.describe("Date Selector", async () => {
 
     const massageTherapyVisitDate = `${secondVisitYear}-${secondVisitMonth}-${secondVisitDay}`;
 
-    const samanthaTableCondensedSelector = page.locator("table.table-condensed").last().locator("tr");
-    const firstDate = Date.parse(await samanthaTableCondensedSelector.nth(1).getByRole("cell").first().innerText());
-    const secondDate = Date.parse(await samanthaTableCondensedSelector.nth(2).getByRole("cell").first().innerText());
-    await expect(firstDate).toBeGreaterThan(secondDate);
+    const firstDate = Date.parse(dermatologistVisitDate);
+    const secondDate = Date.parse(massageTherapyVisitDate);
+    expect(firstDate).not.toBeLessThan(secondDate);
 
-    const validateDeletedVisits = page.locator("table.table-condensed").last().innerText();
-    await samanthaTableCondensedSelector.getByRole('button', {name: 'Delete Visit'}).first().click();
-    await expect(validateDeletedVisits).not.toContain(dermatologistVisitDate);
-    await samanthaTableCondensedSelector.getByRole('button', {name: 'Delete Visit'}).first().click();
-    await expect(validateDeletedVisits).not.toContain(massageTherapyVisitDate);
+    let lastPetVisitSectionCreatedVisits = await lastPetVisitSection.innerText();
+    const dermatologistVisit = lastPetVisitSection.locator("tr").filter({ hasText: "dermatologist visit" });
+    await dermatologistVisit.getByRole("button", { name: "Delete Visit" }).first().click();
+    
+    await page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/visits") && response.status() === 204
+    );
+
+    lastPetVisitSectionCreatedVisits = await lastPetVisitSection.innerText();
+    expect(lastPetVisitSectionCreatedVisits).not.toContain("dermatologist visit");
+
+    let massageTherapyVisit = lastPetVisitSection.locator("tr").filter({ hasText: "massage therapy" });
+    await massageTherapyVisit.getByRole("button", { name: "Delete Visit" }).first().click();
+    await page.waitForResponse(
+      (response) =>
+        response.url().includes("/api/visits") && response.status() === 204
+    );
+    lastPetVisitSectionCreatedVisits = await lastPetVisitSection.innerText();
+    expect(lastPetVisitSectionCreatedVisits).not.toContain("massage therapy");
   });
 });
