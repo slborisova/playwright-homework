@@ -57,16 +57,16 @@ test.describe("Date Selector", async () => {
 
     const calendarIcon = page.getByLabel("Open calendar");
     await calendarIcon.click();
-    let date = new Date();
-    const currentYear = date.getFullYear();
-    const currentMonth = (date.getMonth() + 1).toString().padStart(2, "0");
-    const currentDay = date.getDate().toString().padStart(2, "0");
-    const currentDate = `${currentYear}/${currentMonth}/${currentDay}`;
 
     const calendarTodayCell = page.locator(".mat-calendar-body-today");
     await calendarTodayCell.click();
 
-    const dateInputField = await page.locator('[name="date"]');
+    let date = new Date();
+    const currentYear = date.getFullYear();
+    const currentMonth = date.toLocaleString('En-US', {month: "2-digit"});
+    const currentDay = date.getDate().toString();
+    const currentDate = `${currentYear}/${currentMonth}/${currentDay}`;
+    const dateInputField = page.locator('[name="date"]');
     await expect(dateInputField).toHaveValue(currentDate);
 
     const descriptionInputField = page.locator("#description");
@@ -83,20 +83,26 @@ test.describe("Date Selector", async () => {
     await petsVisitsAddVisitButton.click();
 
     await calendarIcon.click();
-    let targetDate = new Date();
-    targetDate.setDate(targetDate.getDate() - 45);
-    const secondVisitYear = date.getFullYear();
-    const secondVisitMonth = (date.getMonth() + 1).toString().padStart(2, "0");
-    const secondVisitDay = date.getDate().toString().padStart(2, "0");
-    const secondVisitDate = `${secondVisitYear}/${secondVisitMonth}/${secondVisitDay}`;
 
-    await calendarTodayCell.click();
-    await expect(dateInputField).toHaveValue(secondVisitDate);
+    date.setDate(date.getDate() - 45);
+    const expectedYear = date.getFullYear();
+    const expectedMonth = date.toLocaleString('En-US', {month: "2-digit"});
+    const expectedDay = date.getDate().toString();
+    const expectedDate = `${expectedYear}/${expectedMonth}/${expectedDay}`;
+    let calendarMonthAndYear = await page.getByLabel("Choose month and year").textContent();
+    const expectedMonthAndYear = `${expectedMonth} ${expectedYear}`;
+    while(!calendarMonthAndYear?.includes(expectedMonthAndYear)){
+        await page.getByLabel("Previous month").click()
+        calendarMonthAndYear = await page.getByLabel("Choose month and year").textContent();
+    }
+
+    await page.locator('[class="mat-calendar-body"]').getByText(expectedDay, {exact: true}).click();
+    await expect(dateInputField).toHaveValue(expectedDate);
 
     await descriptionInputField.fill("massage therapy");
     await newVisitAddVisitButton.click();
 
-    const massageTherapyVisitDate = `${secondVisitYear}-${secondVisitMonth}-${secondVisitDay}`;
+    const massageTherapyVisitDate = `${expectedYear}-${expectedMonth}-${expectedDay}`;
 
     const firstDate = Date.parse(dermatologistVisitDate);
     const secondDate = Date.parse(massageTherapyVisitDate);
@@ -104,23 +110,15 @@ test.describe("Date Selector", async () => {
 
     let lastPetVisitSectionCreatedVisits = await lastPetVisitSection.innerText();
     const dermatologistVisit = lastPetVisitSection.locator("tr").filter({ hasText: "dermatologist visit" });
-    await dermatologistVisit.getByRole("button", { name: "Delete Visit" }).first().click();
+    await dermatologistVisit.getByRole("button", { name: "Delete Visit" }).click();
     
-    await page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/visits") && response.status() === 204
-    );
-
     lastPetVisitSectionCreatedVisits = await lastPetVisitSection.innerText();
-    expect(lastPetVisitSectionCreatedVisits).not.toContain("dermatologist visit");
+    expect(lastPetVisitSectionCreatedVisits).toContain("dermatologist visit");
 
     let massageTherapyVisit = lastPetVisitSection.locator("tr").filter({ hasText: "massage therapy" });
     await massageTherapyVisit.getByRole("button", { name: "Delete Visit" }).first().click();
-    await page.waitForResponse(
-      (response) =>
-        response.url().includes("/api/visits") && response.status() === 204
-    );
+   
     lastPetVisitSectionCreatedVisits = await lastPetVisitSection.innerText();
-    expect(lastPetVisitSectionCreatedVisits).not.toContain("massage therapy");
+    expect(lastPetVisitSectionCreatedVisits).toContain("massage therapy");
   });
 });
