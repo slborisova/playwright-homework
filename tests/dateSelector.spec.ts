@@ -63,8 +63,8 @@ test.describe("Date Selector", async () => {
 
     let date = new Date();
     const currentYear = date.getFullYear();
-    const currentMonth = date.toLocaleString('En-US', {month: "2-digit"});
-    const currentDay = date.getDate().toString();
+    const currentMonth = date.toLocaleString('en-US', {month: "2-digit"});
+    const currentDay = date.getDate().toString().padStart(2, '0');
     const currentDate = `${currentYear}/${currentMonth}/${currentDay}`;
     const dateInputField = page.locator('[name="date"]');
     await expect(dateInputField).toHaveValue(currentDate);
@@ -77,6 +77,7 @@ test.describe("Date Selector", async () => {
     const dermatologistVisitDate = `${currentYear}-${currentMonth}-${currentDay}`;
 
     const lastPetVisitSection = page.locator("table.table-condensed").last();
+    const lastPetVisitRowDate = lastPetVisitSection.locator("tr");
     const lastPetVisitCellDate = lastPetVisitSection.locator("tr td");
     await expect(lastPetVisitCellDate.first()).toHaveText(dermatologistVisitDate);
 
@@ -101,24 +102,23 @@ test.describe("Date Selector", async () => {
 
     await descriptionInputField.fill("massage therapy");
     await newVisitAddVisitButton.click();
-
-    const massageTherapyVisitDate = `${expectedYear}-${expectedMonth}-${expectedDay}`;
-
-    const firstDate = Date.parse(dermatologistVisitDate);
-    const secondDate = Date.parse(massageTherapyVisitDate);
-    expect(firstDate).not.toBeLessThan(secondDate);
+   
+    const firstDateText = await lastPetVisitRowDate.nth(1).locator('td').first().innerText();
+    const secondDateText = await lastPetVisitRowDate.nth(2).locator('td').first().innerText();
+        
+    const firstDate = new Date(firstDateText.trim());
+    const secondDate = new Date(secondDateText.trim());
+    expect(secondDate.getTime()).toBeLessThan(firstDate.getTime());
 
     let lastPetVisitSectionCreatedVisits = await lastPetVisitSection.innerText();
     const dermatologistVisit = lastPetVisitSection.locator("tr").filter({ hasText: "dermatologist visit" });
     await dermatologistVisit.getByRole("button", { name: "Delete Visit" }).click();
-    
-    lastPetVisitSectionCreatedVisits = await lastPetVisitSection.innerText();
-    expect(lastPetVisitSectionCreatedVisits).toContain("dermatologist visit");
+   
+    await expect(lastPetVisitSection).not.toContainText("dermatologist visit");
 
     let massageTherapyVisit = lastPetVisitSection.locator("tr").filter({ hasText: "massage therapy" });
     await massageTherapyVisit.getByRole("button", { name: "Delete Visit" }).first().click();
-   
-    lastPetVisitSectionCreatedVisits = await lastPetVisitSection.innerText();
-    expect(lastPetVisitSectionCreatedVisits).toContain("massage therapy");
-  });
+
+    await expect(lastPetVisitSection).not.toContainText("massage therapy");
+    });
 });
