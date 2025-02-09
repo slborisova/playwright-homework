@@ -110,15 +110,10 @@ test.describe("Date Selector", async () => {
     const secondDate = new Date(secondDateText.trim());
     expect(secondDate.getTime()).toBeLessThan(firstDate.getTime());
 
-    let lastPetVisitSectionCreatedVisits = await lastPetVisitSection.innerText();
-    const dermatologistVisit = lastPetVisitSection.locator("tr").filter({ hasText: "dermatologist visit" });
-    await dermatologistVisit.getByRole("button", { name: "Delete Visit" }).click();
-   
+    await lastPetVisitSection.locator("tr").filter({ hasText: "dermatologist visit" }).getByRole("button", { name: "Delete Visit" }).click();
     await expect(lastPetVisitSection).not.toContainText("dermatologist visit");
 
-    let massageTherapyVisit = lastPetVisitSection.locator("tr").filter({ hasText: "massage therapy" });
-    await massageTherapyVisit.getByRole("button", { name: "Delete Visit" }).first().click();
-
+    await lastPetVisitSection.locator("tr").filter({ hasText: "massage therapy" }).getByRole("button", { name: "Delete Visit" }).first().click();
     await expect(lastPetVisitSection).not.toContainText("massage therapy");
     });
 });
