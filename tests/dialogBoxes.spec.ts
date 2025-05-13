@@ -1,34 +1,22 @@
 import { test, expect } from "@playwright/test";
+import { PageManager } from "../page-objects/pageManager";
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
-  await page.getByTitle("pettypes").click();
-  await expect(page.locator("h2")).toHaveText("Pet Types");
+  const pM = new PageManager(page);
+  await pM.getNavigationPage().openPetTypesPage();
 });
 
 test.describe("Dialog Boxes", async () => {
   test("Add and delete pet type", async ({ page }) => {
-    await page.getByRole("button", { name: "Add" }).click();
-
-    const nameInputField = page.locator("#name");
-    await expect(nameInputField).toBeVisible();
-
-    await nameInputField.fill("pig");
-    await page.getByRole("button", { name: "Save" }).click();
-
-    const petTypesTableLastInputField = page.locator("table tr td input").last();
-    await expect(petTypesTableLastInputField).toHaveValue("pig");
-
-    page.on("dialog", (dialog) => {
-      expect(dialog.message()).toEqual("Delete the pet type?");
-      dialog.accept();
-    });
-
-    await page
-      .locator("table tr")
-      .last()
-      .getByRole("button", { name: "Delete" })
-      .click();
-    await expect(petTypesTableLastInputField).not.toHaveValue("pig");
+    const pM = new PageManager(page);
+    await pM.getPetTypesPage().activateAddNewPetType();
+        
+    await pM.getPetTypesPage().fillNewPetType("pig");
+    
+    await pM.getPetTypesPage().verifyNewPetTypeAdded("pig");
+       
+    await pM.getPetTypesPage().deleteLastPetType();
+       
+    await pM.getPetTypesPage().validateDeletedPetType("pig");
   });
 });

@@ -1,76 +1,58 @@
 import { test, expect } from "@playwright/test";
+import { PageManager } from "../page-objects/pageManager";
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
-  await page.getByText("Veterinarians").click();
-  await page.getByText("All").click();
-  await expect(page.locator("h2")).toHaveText("Veterinarians");
+  const pM = new PageManager(page);
+  await pM.getNavigationPage().openVeterinariansPage();
 });
 
 test.describe("Check Boxes", async () => {
   test("Validate selected specialties", async ({ page }) => {
-    const specialtiesInputField = page.locator(".selected-specialties");
+    const pM = new PageManager(page);
+    await pM.getVeterinariansPage().editVeterinarian("Helen Leary");
+    
+    await pM.getEditVeterinarianPage().validateSelectedSpecialty("radiology");
+        
+    await  pM.getEditVeterinarianPage().openDropDownMenu(); 
 
-    await page.getByRole("button", { name: "Edit Vet" }).nth(1).click();
-
-    await expect(specialtiesInputField).toHaveText("radiology");
-
-    await page.locator(".dropdown-arrow").click();
-
-    expect(
-      await page.getByRole("checkbox", { name: "radiology" }).isChecked()
-    ).toBeTruthy();
-
-    expect(
-      await page.getByRole("checkbox", { name: "surgery" }).isChecked()
-    ).toBeFalsy();
-    expect(
-      await page.getByRole("checkbox", { name: "dentistry" }).isChecked()
-    ).toBeFalsy();
-
-    await page.getByRole("checkbox", { name: "surgery" }).check();
-    await page.getByRole("checkbox", { name: "radiology" }).uncheck();
-
-    await expect(specialtiesInputField).toHaveText("surgery");
-
-    await page.getByRole("checkbox", { name: "dentistry" }).check();
-
-    await expect(specialtiesInputField).toHaveText("surgery, dentistry");
+    await  pM.getEditVeterinarianPage().specialtyDropDownMenuIsTrue("radiology"); 
+    
+    await pM.getEditVeterinarianPage().specialtyDropDownMenuIsFalse("surgery");
+    await pM.getEditVeterinarianPage().specialtyDropDownMenuIsFalse("dentistry");
+        
+    await pM.getEditVeterinarianPage().checkDropDownSpecialty("surgery");
+    await pM.getEditVeterinarianPage().uncheckDropDownSpecialty("radiology");
+        
+    await pM.getEditVeterinarianPage().validateSelectedSpecialty("surgery");
+    
+    await pM.getEditVeterinarianPage().checkDropDownSpecialty("dentistry");
+        
+    await pM.getEditVeterinarianPage().validateSelectedSpecialty("surgery, dentistry");
   });
 
   test("Select all specialties", async ({ page }) => {
-    const specialtiesInputField = page.locator(".selected-specialties");
-
-    await page.getByRole("button", { name: "Edit Vet" }).nth(3).click();
-
-    await expect(specialtiesInputField).toHaveText("surgery");
-
-    await page.locator(".dropdown-arrow").click();
-
-    const allBoxes = page.getByRole("checkbox");
-    for (const box of await allBoxes.all()) {
-      await box.check();
-      expect(await box.isChecked()).toBeTruthy();
-    }
-    await expect(specialtiesInputField).toHaveText(
-      "surgery, radiology, dentistry, New specialty"
-    );
+    const pM = new PageManager(page);
+    await pM.getVeterinariansPage().editVeterinarian("Rafael Ortega");
+        
+    await pM.getEditVeterinarianPage().validateSelectedSpecialty("surgery");
+    
+    await pM.getEditVeterinarianPage().openDropDownMenu();
+     
+    await pM.getEditVeterinarianPage().selectAllBoxes();
+     
+    await pM.getEditVeterinarianPage().validateSelectedSpecialty("surgery, radiology, dentistry, New specialty");
   });
 
   test("Unselect all specialties", async ({ page }) => {
-    const specialtiesInputField = page.locator(".selected-specialties");
-
-    await page.getByRole("button", { name: "Edit Vet" }).nth(2).click();
-
-    await expect(specialtiesInputField).toHaveText("dentistry, surgery");
-
-    await page.locator(".dropdown-arrow").click();
-
-    const allBoxes = page.getByRole("checkbox");
-    for (const box of await allBoxes.all()) {
-      await box.uncheck();
-      expect(await box.isChecked()).toBeFalsy();
-    }
-    await expect(specialtiesInputField).toBeEmpty();
+    const pM = new PageManager(page);
+    await pM.getVeterinariansPage().editVeterinarian("Linda Douglas");
+    
+    await pM.getEditVeterinarianPage().validateSelectedSpecialty("dentistry, surgery");
+    
+    await pM.getEditVeterinarianPage().openDropDownMenu();
+    
+    await pM.getEditVeterinarianPage().unselectAllBoxes();
+    
+    await pM.getEditVeterinarianPage().validateUnSelectedSpecialty();
   });
 });
