@@ -17,7 +17,7 @@ test.describe("Lists and Drop Downs", async () => {
     await pM.getPetEditPage().checkPetHeaderExists();
     await pM.getPetEditPage().validateOwnerName("George Franklin");
     await pM.getPetEditPage().validatePetType("cat");
-    await pM.getPetEditPage().validateTypesList();
+    await pM.getPetEditPage().validatePredefinedTypesList();
     await pM.getPetEditPage().selectAndValidateSelectedType();
   });
 

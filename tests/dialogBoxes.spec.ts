@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 test.describe("Dialog Boxes", async () => {
   test("Add and delete pet type", async ({ page }) => {
     const pM = new PageManager(page);
-    await pM.getPetTypesPage().activateAddNewPetType();
+    await pM.getPetTypesPage().clickAddNewPetButtonAndValidatePetNameIsVisible();
         
     await pM.getPetTypesPage().fillNewPetType("pig");
     

@@ -6,10 +6,10 @@ export class OwnerInformationPage {
     this.page = page;
   }
 
-  async addNewPet() {
+  async clickAddNewPetButton() {
     await expect(this.page.getByRole("heading").first()).toHaveText("Owner Information");
     await this.page.getByRole("button", { name: "Add New Pet" }).click();
-  }
+}
 
   async validateCreatedPet(petName: string, birthDate: string, petType: string) {
     const lastPetVisit = this.page.locator("table.table-striped").last().locator("tr td dd");
@@ -18,17 +18,17 @@ export class OwnerInformationPage {
     await expect(lastPetVisit.last()).toHaveText(petType);
   }
 
-  async deletePet() {
+  async deleteLastPet() {
     const deletePetButton = this.page.getByRole("button", { name: "Delete Pet" }).last();
     await deletePetButton.click();
   }
 
-  async validateDeletedPet() {
+  async validateLastPetIsDeleted() {
     const lastPetVisit = this.page.locator("table.table-striped").last().locator("tr td dd");
     await expect(lastPetVisit.first()).toBeEmpty();
   }
 
-  async addNewVisit() {
+  async clickAddVisitButtonForNewVisit() {
     await expect(this.page.getByRole("heading").first()).toHaveText("Owner Information");
     const lastPetVisit = this.page.locator("table.table-striped").last();
     const petsVisitsAddVisitButton = lastPetVisit.getByRole("button", {name: "Add Visit"});

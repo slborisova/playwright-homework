@@ -1,5 +1,6 @@
 import { test, expect } from "@playwright/test";
 import { PageManager } from "../page-objects/pageManager";
+import { CurrentDateHelper } from "../page-objects/currentDateHelper";
 
 test.beforeEach(async ({ page }) => {
   const pM = new PageManager(page);
@@ -11,7 +12,7 @@ test.describe("Date Selector", async () => {
     const pM = new PageManager(page);
     await pM.getOwnersPage().selectOwnerByNameAndOpenInformationPage("Harold Davis");
 
-    await pM.getOwnerInformationPage().addNewPet();
+    await pM.getOwnerInformationPage().clickAddNewPetButton();
     
     await pM.getOwnerAddPetPage().fillInPetNameAndCheckIconBehavior();
     
@@ -22,35 +23,32 @@ test.describe("Date Selector", async () => {
     await pM.getOwnerAddPetPage().savePet();
     
     await pM.getOwnerInformationPage().validateCreatedPet("Tom", "2014-05-02", "dog");
-    await pM.getOwnerInformationPage().deletePet();
-    await pM.getOwnerInformationPage().validateDeletedPet();
+    await pM.getOwnerInformationPage().deleteLastPet();
+    await pM.getOwnerInformationPage().validateLastPetIsDeleted();
   });
 
   test("Select the dates of visits and validate dates order", async ({page}) => {
-    let date = new Date();
-    const currentYear = date.getFullYear();
-    const currentMonth = date.toLocaleString("en-US", { month: "2-digit" });
-    const currentDay = date.getDate().toString().padStart(2, "0");
-
+    const currentDate = new CurrentDateHelper();
+    
     const pM = new PageManager(page);
     await pM.getOwnersPage().selectOwnerByNameAndOpenInformationPage("Jean Coleman");
     
-    await pM.getOwnerInformationPage().addNewVisit();
+    await pM.getOwnerInformationPage().clickAddVisitButtonForNewVisit();
     
     await pM.getPetAddVisitPage().validateNewVisitPageOpened();
     await pM.getPetAddVisitPage().validatePetNameAndOwnerName("Samantha", "Jean Coleman");
-    await pM.getPetAddVisitPage().fillInAndValidateVisitDate(currentYear, currentMonth, currentDay);
+    await pM.getPetAddVisitPage().fillInAndValidateVisitDate(currentDate.getCurrentYear(), currentDate.getCurrentMonth(), currentDate.getCurrentDay());
     await pM.getPetAddVisitPage().fillInDescriptionInputField("dermatologist visit");
-    await pM.getPetAddVisitPage().addVisit();
+    await pM.getPetAddVisitPage().clickAddVisitButton();
     
-    const dermatologistVisitDate = `${currentYear}-${currentMonth}-${currentDay}`;
+    const dermatologistVisitDate = `${currentDate.getCurrentYear()}-${currentDate.getCurrentMonth()}-${currentDate.getCurrentDay()}`;
     await pM.getOwnerInformationPage().validateCreatedVisitDate(dermatologistVisitDate);
     
-    await pM.getOwnerInformationPage().addNewVisit();
-    await pM.getPetAddVisitPage().fillInLastVisitDateAndValidate(date);
+    await pM.getOwnerInformationPage().clickAddVisitButtonForNewVisit();
+    await pM.getPetAddVisitPage().fillInLastVisitDateAndValidate(currentDate.getSelectedDate());
    
     await pM.getPetAddVisitPage().fillInDescriptionInputField("massage therapy");
-    await pM.getPetAddVisitPage().addVisit();
+    await pM.getPetAddVisitPage().clickAddVisitButton();
     
     await pM.getOwnerInformationPage().firstTwoVisitDatesComparison();
    

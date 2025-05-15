@@ -33,11 +33,11 @@ export class EditVeterinarianPage {
     await this.page.locator(".dropdown-arrow").click();
   }
 
-  async specialtyDropDownMenuIsTrue(specialtyName: string){
+  async validateDropDownSpecialtyIsCheckedFor(specialtyName: string){
     expect(await this.page.getByRole("checkbox", { name: specialtyName }).isChecked()).toBeTruthy();
   }
 
-  async specialtyDropDownMenuIsFalse(specialtyName: string){
+  async validateDropDownSpecialtyIsNotCheckedFor(specialtyName: string){
     expect(await this.page.getByRole("checkbox", { name: specialtyName }).isChecked()).toBeFalsy();
   }
 

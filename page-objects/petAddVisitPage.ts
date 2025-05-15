@@ -32,7 +32,7 @@ export class PetAddVisitPage {
         await descriptionInputField.fill(visitDescription);
     }
 
-    async addVisit(){
+    async clickAddVisitButton(){
         const newVisitAddVisitButton = this.page.getByRole("button", {name: "Add Visit"});
         await newVisitAddVisitButton.click();
     }

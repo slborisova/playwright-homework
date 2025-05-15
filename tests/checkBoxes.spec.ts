@@ -15,10 +15,10 @@ test.describe("Check Boxes", async () => {
         
     await  pM.getEditVeterinarianPage().openDropDownMenu(); 
 
-    await  pM.getEditVeterinarianPage().specialtyDropDownMenuIsTrue("radiology"); 
+    await  pM.getEditVeterinarianPage().validateDropDownSpecialtyIsCheckedFor("radiology"); 
     
-    await pM.getEditVeterinarianPage().specialtyDropDownMenuIsFalse("surgery");
-    await pM.getEditVeterinarianPage().specialtyDropDownMenuIsFalse("dentistry");
+    await pM.getEditVeterinarianPage().validateDropDownSpecialtyIsNotCheckedFor("surgery");
+    await pM.getEditVeterinarianPage().validateDropDownSpecialtyIsNotCheckedFor("dentistry");
         
     await pM.getEditVeterinarianPage().checkDropDownSpecialty("surgery");
     await pM.getEditVeterinarianPage().uncheckDropDownSpecialty("radiology");

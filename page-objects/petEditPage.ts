@@ -19,7 +19,7 @@ export class PetEditPage {
     await expect(petTypeInputField).toHaveValue(petType);
   }
 
-  async validateTypesList() {
+  async validatePredefinedTypesList() {
     const petTypeDropdownMenu = this.page.locator("#type");
     await petTypeDropdownMenu.click();
     const typeList = await this.page.locator("#type option");

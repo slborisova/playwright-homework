@@ -12,7 +12,7 @@ export class PetTypesPage {
     await expect(this.page.locator("h2")).toHaveText("Pet Types");
   }
 
-  async activateAddNewPetType() {
+  async clickAddNewPetButtonAndValidatePetNameIsVisible() {
     await this.page.getByRole("button", { name: "Add" }).click();
     const nameInputField = this.page.locator("#name");
     await expect(nameInputField).toBeVisible();
@@ -47,25 +47,17 @@ export class PetTypesPage {
     await expect(petTypesTableLastInputField).not.toHaveValue(petTypeName);
   }
 
-  async editFirstPetType(){
+  async clickEdiButtonForTheFirstPetType(){
     const editButton = this.page.getByRole("button", { name: "Edit" });
     await editButton.first().click();
   }
 
-  async validateFirstPetType(petName: string){
-    await expect(this.page.locator('[id="0"]')).toHaveValue(petName);
+  async validatePetTypeByIndex(numberId: number, petName: string){
+    await expect(this.page.locator(`[id="${numberId}"]`)).toHaveValue(petName);
   }
 
-  async editSecondPetType(){
-    await this.page.getByRole("button", { name: "Edit" }).nth(1).click();
-  }
-
-  async validateSecondPetType(petName: string){
-    await expect(this.page.locator('[id="1"]')).toHaveValue(petName);
-  }
-
-  async editThirdPetType(){
-    await this.page.getByRole("button", { name: "Edit" }).nth(2).click();
+  async editPetTypeByIndex(index: number){
+    await this.page.getByRole("button", { name: "Edit" }).nth(index).click();
   }
 
   async validatePetTypesHeader(){

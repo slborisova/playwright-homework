@@ -9,7 +9,7 @@ test.beforeEach(async ({ page }) => {
 test.describe("Interacting with Input Fields", async () => {
   test("Update pet type", async ({ page }) => {
     const pM = new PageManager(page);
-    await pM.getPetTypesPage().editFirstPetType();
+    await pM.getPetTypesPage().clickEdiButtonForTheFirstPetType();
     
     await pM.getEditPetTypePage().validateEditPetTypeHeader();
     
@@ -17,20 +17,20 @@ test.describe("Interacting with Input Fields", async () => {
     
     await pM.getEditPetTypePage().updatePetType();
     
-    await pM.getPetTypesPage().validateFirstPetType("rabbit");
+    await pM.getPetTypesPage().validatePetTypeByIndex(0, "rabbit");
     
-    await pM.getPetTypesPage().editFirstPetType();
+    await pM.getPetTypesPage().clickEdiButtonForTheFirstPetType();
     
     await pM.getEditPetTypePage().fillPetTypeBox("cat");
         
     await pM.getEditPetTypePage().updatePetType();
     
-    await pM.getPetTypesPage().validateFirstPetType("cat");
+    await pM.getPetTypesPage().validatePetTypeByIndex(0, "cat");
   });
 
   test("Cancel pet type update", async ({ page }) => {
     const pM = new PageManager(page);
-    await pM.getPetTypesPage().editSecondPetType();
+    await pM.getPetTypesPage().editPetTypeByIndex(1);
     
     await pM.getEditPetTypePage().validateEditPetTypeHeader();
    
@@ -40,12 +40,12 @@ test.describe("Interacting with Input Fields", async () => {
     
     await pM.getEditPetTypePage().cancelPetType();
    
-    await pM.getPetTypesPage().validateSecondPetType("dog");
+    await pM.getPetTypesPage().validatePetTypeByIndex(1, "dog");
   });
 
   test("Pet type name is required validation", async ({ page }) => {
     const pM = new PageManager(page);
-    await pM.getPetTypesPage().editThirdPetType();
+    await pM.getPetTypesPage().editPetTypeByIndex(2);
    
     await pM.getEditPetTypePage().clearPetTypeField();
         
