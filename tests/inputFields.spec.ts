@@ -1,69 +1,62 @@
 import { test, expect } from "@playwright/test";
+import { PageManager } from "../page-objects/pageManager";
 
 test.beforeEach(async ({ page }) => {
-  await page.goto("/");
-  await page.getByTitle("pettypes").click();
-  await expect(page.locator("h2")).toHaveText("Pet Types");
+  const pM = new PageManager(page);
+  await pM.getNavigationPage().openPetTypesPage();
 });
 
 test.describe("Interacting with Input Fields", async () => {
   test("Update pet type", async ({ page }) => {
-    const editPetTypeInputField = page.getByRole("textbox");
-    const editButton = page.getByRole("button", { name: "Edit" });
-    const updateButton = page.getByRole("button", { name: "Update" });
-
-    await editButton.first().click();
-
-    await expect(page.locator("h2")).toHaveText("Edit Pet Type");
-
-    await editPetTypeInputField.click();
-    await editPetTypeInputField.clear();
-    await editPetTypeInputField.fill("rabbit");
-    await updateButton.click();
-
-    await expect(page.locator('[id="0"]')).toHaveValue("rabbit");
-
-    await editButton.first().click();
-
-    await editPetTypeInputField.click();
-    await editPetTypeInputField.clear();
-    await editPetTypeInputField.fill("cat");
-    await updateButton.click();
-
-    await expect(page.locator('[id="0"]')).toHaveValue("cat");
+    const pM = new PageManager(page);
+    await pM.getPetTypesPage().clickEdiButtonForTheFirstPetType();
+    
+    await pM.getEditPetTypePage().validateEditPetTypeHeader();
+    
+    await pM.getEditPetTypePage().fillPetTypeBox("rabbit");
+    
+    await pM.getEditPetTypePage().updatePetType();
+    
+    await pM.getPetTypesPage().validatePetTypeByIndex(0, "rabbit");
+    
+    await pM.getPetTypesPage().clickEdiButtonForTheFirstPetType();
+    
+    await pM.getEditPetTypePage().fillPetTypeBox("cat");
+        
+    await pM.getEditPetTypePage().updatePetType();
+    
+    await pM.getPetTypesPage().validatePetTypeByIndex(0, "cat");
   });
 
   test("Cancel pet type update", async ({ page }) => {
-    const editPetTypeInputField = page.getByRole("textbox");
-
-    await page.getByRole("button", { name: "Edit" }).nth(1).click();
-    await editPetTypeInputField.click();
-    await editPetTypeInputField.clear();
-    await editPetTypeInputField.fill("moose");
-
-    await expect(editPetTypeInputField).toHaveValue("moose");
-
-    await page.getByRole("button", { name: "Cancel" }).click();
-
-    await expect(page.locator('[id="1"]')).toHaveValue("dog");
+    const pM = new PageManager(page);
+    await pM.getPetTypesPage().editPetTypeByIndex(1);
+    
+    await pM.getEditPetTypePage().validateEditPetTypeHeader();
+   
+    await pM.getEditPetTypePage().fillPetTypeBox("moose");
+   
+    await pM.getEditPetTypePage().validatePetType("moose");
+    
+    await pM.getEditPetTypePage().cancelPetType();
+   
+    await pM.getPetTypesPage().validatePetTypeByIndex(1, "dog");
   });
 
   test("Pet type name is required validation", async ({ page }) => {
-    const editPetTypeInputField = page.getByRole("textbox");
-
-    await page.getByRole("button", { name: "Edit" }).nth(2).click();
-
-    await editPetTypeInputField.click();
-    await editPetTypeInputField.clear();
-
-    await expect(page.locator('.help-block')).toHaveText( "Name is required");
-
-    await page.getByRole("button", { name: "Update" }).click();
-
-    await expect(page.locator("h2")).toHaveText("Edit Pet Type");
-
-    await page.getByRole("button", { name: "Cancel" }).click();
-
-    await expect(page.locator("h2")).toHaveText("Pet Types");
+    const pM = new PageManager(page);
+    await pM.getPetTypesPage().editPetTypeByIndex(2);
+   
+    await pM.getEditPetTypePage().clearPetTypeField();
+        
+    await pM.getEditPetTypePage().nameRequiredMessage();
+   
+    await pM.getEditPetTypePage().updatePetType();
+    
+    await pM.getEditPetTypePage().validateEditPetTypeHeader();
+    
+    await pM.getEditPetTypePage().cancelPetType();
+   
+    await pM.getPetTypesPage().validatePetTypesHeader();
   });
 });
