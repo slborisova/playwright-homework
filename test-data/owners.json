@@ -1,0 +1,239 @@
+[
+  {
+    "firstName": "Miranda",
+    "lastName": "Day",
+    "address": "356 Dogwood Dr.",
+    "city": "Middletown",
+    "telephone": "6085552658",
+    "id": 289,
+    "pets": [
+      {
+        "name": "Buddy",
+        "birthDate": "1995-09-04",
+        "type": {
+          "name": "dog",
+          "id": 923
+        },
+        "id": 636,
+        "ownerId": 270,
+        "visits": [
+          {
+            "date": "2011-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2010-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2009-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2008-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2007-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2006-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2005-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2004-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2003-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2002-09-04",
+            "description": "rabies shot",
+            "id": 1174,
+            "petId": null
+          }
+        ]
+      },
+      {
+        "name": "Bella",
+        "birthDate": "1995-09-04",
+        "type": {
+          "name": "dog",
+          "id": 923
+        },
+        "id": 635,
+        "ownerId": 270,
+        "visits": [
+          {
+            "date": "2010-03-04",
+            "description": "rabies shot",
+            "id": 1975,
+            "petId": null
+          },
+          {
+            "date": "2009-06-04",
+            "description": "spayed",
+            "id": 1176,
+            "petId": null
+          }
+        ]
+      }
+    ]
+  },
+
+  {
+    "firstName": "Owen",
+    "lastName": "Morgan",
+    "address": "10590 Main St.",
+    "city": "Springfield",
+    "telephone": "6085552655",
+    "id": 272,
+    "pets": [
+      {
+        "name": "Luna",
+        "birthDate": "1995-09-04",
+        "type": {
+          "name": "cat",
+          "id": 923
+        },
+        "id": 636,
+        "ownerId": 270,
+        "visits": [
+          {
+            "date": "2011-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2008-09-04",
+            "description": "rabies shot",
+            "id": 1174,
+            "petId": null
+          }
+        ]
+      },
+      {
+        "name": "Daisy",
+        "birthDate": "1995-09-04",
+        "type": {
+          "name": "cat",
+          "id": 923
+        },
+        "id": 635,
+        "ownerId": 270,
+        "visits": [
+          {
+            "date": "2010-03-04",
+            "description": "rabies shot",
+            "id": 1975,
+            "petId": null
+          },
+          {
+            "date": "2009-06-04",
+            "description": "spayed",
+            "id": 1176,
+            "petId": null
+          }
+        ]
+      },
+      {
+        "name": "Misty",
+        "birthDate": "1995-09-04",
+        "type": {
+          "name": "cat",
+          "id": 923
+        },
+        "id": 636,
+        "ownerId": 270,
+        "visits": [
+          {
+            "date": "2011-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2008-09-04",
+            "description": "rabies shot",
+            "id": 1174,
+            "petId": null
+          }
+        ]
+      },
+      {
+        "name": "Fred",
+        "birthDate": "1995-09-04",
+        "type": {
+          "name": "cat",
+          "id": 923
+        },
+        "id": 636,
+        "ownerId": 270,
+        "visits": [
+          {
+            "date": "2011-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2008-09-04",
+            "description": "rabies shot",
+            "id": 1174,
+            "petId": null
+          }
+        ]
+      },
+      {
+        "name": "Oscar",
+        "birthDate": "1995-09-04",
+        "type": {
+          "name": "cat",
+          "id": 923
+        },
+        "id": 636,
+        "ownerId": 270,
+        "visits": [
+          {
+            "date": "2011-03-04",
+            "description": "neutered",
+            "id": 1175,
+            "petId": null
+          },
+          {
+            "date": "2008-09-04",
+            "description": "rabies shot",
+            "id": 1174,
+            "petId": null
+          }
+        ]
+      }
+    ]
+  }
+]
