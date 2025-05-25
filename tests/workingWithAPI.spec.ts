@@ -21,16 +21,15 @@ test.beforeEach(async ({ page }) => {
   await page.goto("/");
   await page.getByText("Owners").click();
   await page.getByText("Search").click();
-  await page.waitForLoadState("networkidle");
+  await expect(page.locator("h2")).toHaveText("Owners");
 });
 
 test("mocking API request", async ({ page }) => {
   await expect(page.locator(".ownerFullName")).toHaveCount(2);
 
-  const ownerRow = page.getByText("Miranda Day");
-  await ownerRow.click();
-  await page.waitForLoadState("networkidle");
-  
+  await page.getByText("Miranda Day").click();
+  await expect(page.getByRole("heading").first()).toHaveText("Owner Information");
+    
   await expect(page.getByRole("heading").first()).toHaveText("Owner Information");
 
   await expect(page.locator(".ownerFullName")).toHaveText("Miranda Day");
