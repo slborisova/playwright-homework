@@ -29,9 +29,7 @@ test("mocking API request", async ({ page }) => {
 
   await page.getByText("Miranda Day").click();
   await expect(page.getByRole("heading").first()).toHaveText("Owner Information");
-    
-  await expect(page.getByRole("heading").first()).toHaveText("Owner Information");
-
+  
   await expect(page.locator(".ownerFullName")).toHaveText("Miranda Day");
 
   await expect(page.locator("app-pet-list")).toHaveCount(2);
