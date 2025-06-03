@@ -44,36 +44,35 @@ test.describe("Veterinarians", async () => {
     await page.route('*/**/api/vets', async (route) => {
       const response = await route.fetch();
       const responseBody = await response.json();
-
-      for (let i = 0; i < responseBody.length; i++) {
-        if (responseBody[i].firstName == "Sharon" && responseBody[i].lastName == "Jenkins"){
-          responseBody[i].specialties.push(
-            { id: 10000, name: "ophthalmology" },
-            { id: 10001, name: "oncology" },
-            { id: 10002, name: "immunology" },
-            { id: 10003, name: "toxicology" },
-            { id: 10004, name: "cardiology" },
-            { id: 10005, name: "neurology" },
-            { id: 10006, name: "urology" },
-            { id: 10007, name: "avian" },
-            { id: 10008, name: "equine" },
-            { id: 10009, name: "nutrition" }
-          );
-        }
-      }
+      responseBody.forEach(vet => {
+          if (vet.firstName == "Sharon" && vet.lastName == "Jenkins"){
+                vet.specialties.push(
+                  { id: 10000, name: "ophthalmology" },
+                  { id: 10001, name: "oncology" },
+                  { id: 10002, name: "immunology" },
+                  { id: 10003, name: "toxicology" },
+                  { id: 10004, name: "cardiology" },
+                  { id: 10005, name: "neurology" },
+                  { id: 10006, name: "urology" },
+                  { id: 10007, name: "avian" },
+                  { id: 10008, name: "equine" },
+                  { id: 10009, name: "nutrition" }
+                );
+            }
+      })
 
       await route.fulfill({
         body: JSON.stringify(responseBody),
       });
     });
+  });
 
+  test("intercept api response", async ({ page }) => {
     await page.goto("/");
     await page.getByText("Veterinarians").click();
     await page.getByText("All").click();
     await expect(page.locator("h2")).toHaveText("Veterinarians");
-  });
 
-  test("intercept api response", async ({ page }) => {
     await expect(page.locator('tr').filter({ hasText: 'Sharon Jenkins' }).locator('td').nth(1)).toContainText("ophthalmology oncology immunology toxicology cardiology neurology urology avian equine nutrition");
   });
 });
