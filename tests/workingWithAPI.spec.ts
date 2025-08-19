@@ -91,13 +91,11 @@ test("Add and delete an owner", async ({ page, request }) => {
   await page.locator("#city").fill("Mt. Martin");
   await page.locator("#telephone").fill("6085555481");
 
-  const responsePromise = page.waitForResponse(
-    "https://petclinic-api.bondaracademy.com/petclinic/api/owners"
-  );
-
   await page.getByRole("button", { name: "Add Owner" }).click();
 
-  const newOwnerResponse = await responsePromise;
+  const newOwnerResponse = await page.waitForResponse(
+    "https://petclinic-api.bondaracademy.com/petclinic/api/owners"
+  );
   const newOwnerJsonBody = await newOwnerResponse.json();
   const newOwnerId = newOwnerJsonBody.id;
 
@@ -109,9 +107,7 @@ test("Add and delete an owner", async ({ page, request }) => {
   const deleteNewOwnerResponse = await request.delete("https://petclinic-api.bondaracademy.com/petclinic/api/owners/" + newOwnerId, {});
   expect(deleteNewOwnerResponse.status()).toEqual(204);
 
-  await page.goto("/");
-  await page.getByText("Owners").click();
-  await page.getByText("Search").click();
+  await page.reload();
   await expect(page.locator("h2")).toHaveText("Owners");
 
   await expect(page.getByRole("row", { name: "Jen Smith" })).not.toBeVisible();
