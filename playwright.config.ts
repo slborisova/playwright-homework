@@ -27,5 +27,9 @@ export default defineConfig({
         browserName: "chromium",
       },
     },
+    {
+      name: 'firefox',
+      use: { ...devices['Desktop Firefox'] },
+    },
   ],
 });
