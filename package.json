@@ -3,7 +3,11 @@
   "version": "1.0.0",
   "description": "",
   "main": "index.js",
-  "scripts": {},
+  "scripts": {
+    "dialogBoxes-chrome": "npx playwright test dialogBoxes.spec.ts --project=chromium",
+    "dialogBoxes-firefox": "npx playwright test dialogBoxes.spec.ts --project=firefox",
+    "dialogBoxes-all": "npm run dialogBoxes-chrome && npm run dialogBoxes-firefox"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
