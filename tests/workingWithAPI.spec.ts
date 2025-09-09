@@ -1,5 +1,7 @@
 import { test, expect } from "@playwright/test";
 import owners from "../test-data/owners.json";
+import { faker } from "@faker-js/faker";
+import { OwnerHelper } from '../tests/ownerHelper';
 
 test.describe("Owners", async () => {
   test.beforeEach(async ({ page }) => {
@@ -74,10 +76,20 @@ test.describe("Veterinarians", async () => {
     await page.getByText("All").click();
     await expect(page.locator("h2")).toHaveText("Veterinarians");
 
-    await expect(page.locator("tr").filter({ hasText: "Sharon Jenkins" }).locator("td").nth(1)).toContainText("ophthalmology oncology immunology toxicology cardiology neurology urology avian equine nutrition")});
+    await expect(page.locator("tr").filter({ hasText: "Sharon Jenkins" }).locator("td").nth(1)).toContainText("ophthalmology oncology immunology toxicology cardiology neurology urology avian equine nutrition");
+  });
 });
 
 test("Add and delete an owner", async ({ page, request }) => {
+
+  const owner = new OwnerHelper();
+
+  const randomFirstName = owner.getFirstName();
+  const randomLastName = owner.getLastName();
+  const randomAddress = faker.location.streetAddress();
+  const randomCity = owner.getStreetAddress();
+  const randomPhone = owner.getStreetAddress();
+
   await page.goto("/");
   await page.getByText("Owners").click();
   await page.getByText("Search").click();
@@ -85,13 +97,13 @@ test("Add and delete an owner", async ({ page, request }) => {
   await page.getByRole("button", { name: "Add Owner" }).click();
   await expect(page.locator("h2")).toHaveText("New Owner");
 
-  await page.locator("#firstName").fill("Jen");
-  await page.locator("#lastName").fill("Smith");
-  await page.locator("#address").fill("223 Marvel Rd");
-  await page.locator("#city").fill("Mt. Martin");
-  await page.locator("#telephone").fill("6085555481");
+  await page.locator("#firstName").fill(randomFirstName);
+  await page.locator("#lastName").fill(randomLastName);
+  await page.locator("#address").fill(randomAddress);
+  await page.locator("#city").fill(randomCity);
+  await page.locator("#telephone").fill(randomPhone);
 
-  await page.getByRole("button", { name: "Add Owner" }).click();
+  await page.getByRole("button", { name: `"Add Owner"` }).click();
 
   const newOwnerResponse = await page.waitForResponse(
     "https://petclinic-api.bondaracademy.com/petclinic/api/owners"
@@ -99,16 +111,20 @@ test("Add and delete an owner", async ({ page, request }) => {
   const newOwnerJsonBody = await newOwnerResponse.json();
   const newOwnerId = newOwnerJsonBody.id;
 
-  const newOwnerRow = page.getByRole("row", { name: "Jen Smith" });
-  await expect(newOwnerRow.locator("td").nth(1)).toHaveText("223 Marvel Rd");
-  await expect(newOwnerRow.locator("td").nth(2)).toHaveText("Mt. Martin");
-  await expect(newOwnerRow.locator("td").nth(3)).toHaveText("6085555481");
+  const newOwnerRow = page.getByRole("row", {name: `${randomFirstName} ${randomLastName}`});
+  await expect(newOwnerRow.locator("td").nth(1)).toHaveText(randomAddress);
+  await expect(newOwnerRow.locator("td").nth(2)).toHaveText(randomCity);
+  await expect(newOwnerRow.locator("td").nth(3)).toHaveText(randomPhone);
 
-  const deleteNewOwnerResponse = await request.delete("https://petclinic-api.bondaracademy.com/petclinic/api/owners/" + newOwnerId, {});
+  const deleteNewOwnerResponse = await request.delete(
+    "https://petclinic-api.bondaracademy.com/petclinic/api/owners/" +
+      newOwnerId,
+    {}
+  );
   expect(deleteNewOwnerResponse.status()).toEqual(204);
 
   await page.reload();
   await expect(page.locator("h2")).toHaveText("Owners");
 
-  await expect(page.getByRole("row", { name: "Jen Smith" })).not.toBeVisible();
+  await expect(page.getByRole("row", { name: `${randomFirstName} ${randomLastName}` })).not.toBeVisible();
 });
