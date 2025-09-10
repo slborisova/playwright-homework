@@ -1,7 +1,6 @@
 import { chromium, type FullConfig } from "@playwright/test";
 
-import fs from "fs";
-import { promises as fsPromises } from "fs";
+const fs = require('fs').promises;
 const filePath = ".auth/user.json";
 
 async function browserAuthorize(config: FullConfig) {
