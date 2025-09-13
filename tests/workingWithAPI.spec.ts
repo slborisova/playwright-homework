@@ -82,13 +82,11 @@ test.describe("Veterinarians", async () => {
 
 test("Add and delete an owner", async ({ page, request }) => {
 
-  const owner = new OwnerHelper();
-
-  const randomFirstName = owner.getFirstName();
-  const randomLastName = owner.getLastName();
+  const randomFirstName = faker.person.firstName();
+  const randomLastName = faker.person.lastName();
   const randomAddress = faker.location.streetAddress();
-  const randomCity = owner.getStreetAddress();
-  const randomPhone = owner.getStreetAddress();
+  const randomCity = faker.location.city();
+  const randomPhone = faker.phone.number();
 
   await page.goto("/");
   await page.getByText("Owners").click();
