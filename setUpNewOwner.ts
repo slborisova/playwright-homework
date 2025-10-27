@@ -1,24 +1,31 @@
 import { test as base, expect } from "@playwright/test";
 import { PageManager } from "./page-objects/pageManager";
-const { faker } = require("@faker-js/faker");
+import { faker } from "@faker-js/faker";
 
-export type NewOwner = {
+export type OwnerData = {
   randomFirstName: string;
   randomLastName: string;
   randomPetName: string;
-  createNewOwner: string;
+};
+
+export type NewOwner = {
+  createNewOwner: OwnerData;
   pageManager: PageManager;
 };
 
 export const test = base.extend<NewOwner>({
-  randomFirstName: ["", { option: true }],
-  randomLastName: ["", { option: true }],
-  randomPetName: ["", { option: true }],
+ 
+  createNewOwner: async ({ page, request }, use) => {
+    const newOwnerData: OwnerData = {
+      randomFirstName: faker.person.firstName(),
+      randomLastName: faker.person.lastName(),
+      randomPetName: faker.animal.dog()
+    }
 
-  createNewOwner: async ({ page, request, randomFirstName, randomLastName, randomPetName }, use) => {
-    const randomAddress = faker.address.streetAddress();
-    const randomCity = faker.address.city();
-    const randomPhone = faker.phone.phoneNumber("#########");
+
+    const randomAddress = faker.location.streetAddress();
+    const randomCity = faker.location.city();
+    const randomPhone = faker.phone.number();
     const randomVisitDescription = faker.lorem.sentence();
 
     await page.goto("/");
@@ -28,8 +35,8 @@ export const test = base.extend<NewOwner>({
     await page.getByRole("button", { name: "Add Owner" }).click();
     await expect(page.locator("h2")).toHaveText("New Owner");
 
-    await page.locator("#firstName").fill(randomFirstName);
-    await page.locator("#lastName").fill(randomLastName);
+    await page.locator("#firstName").fill(newOwnerData.randomFirstName);
+    await page.locator("#lastName").fill(newOwnerData.randomLastName);
     await page.locator("#address").fill(randomAddress);
     await page.locator("#city").fill(randomCity);
     await page.locator("#telephone").fill(randomPhone);
@@ -40,13 +47,13 @@ export const test = base.extend<NewOwner>({
     const newOwnerJsonBody = await newOwnerResponse.json();
     const newOwnerId = newOwnerJsonBody.id;
 
-    const ownerRow = page.getByText(randomFirstName + " " + randomLastName);
+    const ownerRow = page.getByText(newOwnerData.randomFirstName + " " + newOwnerData.randomLastName);
     await ownerRow.click();
 
     await page.getByRole("button", { name: "Add New Pet" }).click();
 
     const nameInputField = page.getByRole("textbox", { name: "name" });
-    await nameInputField.fill(randomPetName);
+    await nameInputField.fill(newOwnerData.randomPetName);
 
     await page.getByLabel("Open calendar").click();
     await page.getByRole("button", { name: "Choose month and year" }).click();
@@ -63,7 +70,7 @@ export const test = base.extend<NewOwner>({
 
     await page.waitForResponse((response) => response.url().includes(`/pets`));
 
-    const randomPetVisit = page.locator("table.table-striped").filter({ hasText: randomPetName });
+    const randomPetVisit = page.locator("table.table-striped").filter({ hasText: newOwnerData.randomPetName });
     const randomPetVisitAddVisitButton = randomPetVisit.getByRole("button", {name: "Add Visit"});
 
     await randomPetVisitAddVisitButton.click();
@@ -78,9 +85,9 @@ export const test = base.extend<NewOwner>({
 
     const randomVisitAddVisitButton = page.getByRole("button", {name: "Add Visit"});
     await randomVisitAddVisitButton.click();
-    await page.waitForResponse((response) =>response.url().includes(`/visits`));
+    await page.waitForResponse((response) => response.url().includes(`/visits`));
 
-    await use("");
+    await use(newOwnerData);
 
     const deleteNewOwnerResponse = await request.delete(
       "https://petclinic-api.bondaracademy.com/petclinic/api/owners/" +
