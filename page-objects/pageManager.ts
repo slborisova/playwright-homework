@@ -87,5 +87,4 @@ export class PageManager{
     getVeterinariansPage(){
         return this.veterinariansPage;
     }
-
 }

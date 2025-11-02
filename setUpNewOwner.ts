@@ -22,19 +22,14 @@ export const test = base.extend<NewOwner>({
       randomPetName: faker.animal.dog()
     }
 
-
     const randomAddress = faker.location.streetAddress();
     const randomCity = faker.location.city();
     const randomPhone = faker.phone.number();
     const randomVisitDescription = faker.lorem.sentence();
 
-    await page.goto("/");
-    await page.getByText("Owners").click();
-    await page.getByText("Search").click();
-    await expect(page.locator("h2")).toHaveText("Owners");
-    await page.getByRole("button", { name: "Add Owner" }).click();
-    await expect(page.locator("h2")).toHaveText("New Owner");
-
+    const pm = new PageManager(page);
+    await pm.getNavigationPage().openNewOwnerPage()
+    
     await page.locator("#firstName").fill(newOwnerData.randomFirstName);
     await page.locator("#lastName").fill(newOwnerData.randomLastName);
     await page.locator("#address").fill(randomAddress);
@@ -55,13 +50,8 @@ export const test = base.extend<NewOwner>({
     const nameInputField = page.getByRole("textbox", { name: "name" });
     await nameInputField.fill(newOwnerData.randomPetName);
 
-    await page.getByLabel("Open calendar").click();
-    await page.getByRole("button", { name: "Choose month and year" }).click();
-    await page.getByRole("button", { name: "Previous 24 years" }).click();
-    await page.getByText("2014").click();
-    await page.getByText("MAY").click();
-    await page.getByText("2", { exact: true }).click();
-
+    await pm.getOwnerAddPetPage().fillInBirthDateAndCheckDate();
+    
     const petTypeField = page.locator("#type");
     await petTypeField.selectOption("dog");
 
