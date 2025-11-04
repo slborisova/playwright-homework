@@ -17,6 +17,15 @@ export class NavigationPage {
         await expect(this.page.locator("h2")).toHaveText("Owners");
     }
 
+    async openNewOwnerPage(){
+        await this.page.goto("/");
+        await this.page.getByText("Owners").click();
+        await this.page.getByText("Search").click();
+        await expect(this.page.locator("h2")).toHaveText("Owners");
+        await this.page.getByRole("button", { name: "Add Owner" }).click();
+        await expect(this.page.locator("h2")).toHaveText("New Owner");
+    }
+
     async openVeterinariansPage() {
         await this.page.goto("/");
         await this.page.getByText("Veterinarians").click();

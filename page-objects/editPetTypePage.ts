@@ -34,8 +34,7 @@ export class EditPetTypePage {
     await this.page.getByRole("button", { name: "Cancel" }).click();
   }
 
-  
-  async clearPetTypeField(){
+    async clearPetTypeField(){
     const editPetTypeInputField = this.page.getByRole("textbox");
     await editPetTypeInputField.click();
     await editPetTypeInputField.clear();

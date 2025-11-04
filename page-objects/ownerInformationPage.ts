@@ -9,7 +9,7 @@ export class OwnerInformationPage {
   async clickAddNewPetButton() {
     await expect(this.page.getByRole("heading").first()).toHaveText("Owner Information");
     await this.page.getByRole("button", { name: "Add New Pet" }).click();
-}
+  }
 
   async validateCreatedPet(petName: string, birthDate: string, petType: string) {
     const lastPetVisit = this.page.locator("table.table-striped").last().locator("tr td dd");
@@ -22,6 +22,8 @@ export class OwnerInformationPage {
     const deletePetButton = this.page.getByRole("button", { name: "Delete Pet" }).last();
     await deletePetButton.click();
   }
+
+  async deletePetByPetName(petName: string) {}
 
   async validateLastPetIsDeleted() {
     const lastPetVisit = this.page.locator("table.table-striped").last().locator("tr td dd");
@@ -79,6 +81,7 @@ export class OwnerInformationPage {
   async validatePhoneNumberAndPetName(phoneNumber: string, petName: string) {
     await expect(this.page.getByRole("row", { name: "Telephone" }).getByRole("cell").last()).toHaveText(phoneNumber);
 
-    await expect(this.page.locator("table.table-striped").last().locator("tr td dd").first()).toHaveText(petName);
+    await expect(
+      this.page.locator("table.table-striped").last().locator("tr td dd").first()).toHaveText(petName);
   }
 }

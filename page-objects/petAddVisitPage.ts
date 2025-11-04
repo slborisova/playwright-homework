@@ -55,6 +55,5 @@ export class PetAddVisitPage {
         await this.page.locator('[class="mat-calendar-body"]').getByText(expectedDay, {exact: true}).click();
         const dateInputField = this.page.locator('[name="date"]');
         await expect(dateInputField).toHaveValue(expectedDate);
-
     }
 }
