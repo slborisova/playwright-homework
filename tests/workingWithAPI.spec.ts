@@ -27,9 +27,7 @@ test.describe("Owners", async () => {
     await expect(page.locator(".ownerFullName")).toHaveCount(2);
 
     await page.getByText("Miranda Day").click();
-    await expect(page.getByRole("heading").first()).toHaveText(
-      "Owner Information"
-    );
+    await expect(page.getByRole("heading").first()).toHaveText("Owner Information");
 
     await expect(page.locator(".ownerFullName")).toHaveText("Miranda Day");
 
@@ -38,8 +36,7 @@ test.describe("Owners", async () => {
     await expect(page.locator("app-pet-list").first()).toContainText("Buddy");
     await expect(page.locator("app-pet-list").last()).toContainText("Bella");
 
-    await expect(page.locator("table.table-condensed").first().getByRole("button", { name: "Edit Visit" })).toHaveCount(10);
-  });
+    await expect(page.locator("table.table-condensed").first().getByRole("button", { name: "Edit Visit" })).toHaveCount(10)});
 });
 
 test.describe("Veterinarians", async () => {

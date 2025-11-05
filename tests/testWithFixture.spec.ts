@@ -1,21 +1,16 @@
-import { test } from "../setUpNewOwner";
+import { test, OwnerData } from "../setUpNewOwner";
 import { expect } from "@playwright/test";
-const { faker } = require("@faker-js/faker");
-
-test.use({ randomFirstName: faker.name.firstName() });
-test.use({ randomLastName: faker.name.lastName() });
-test.use({ randomPetName: faker.animal.dog() });
 
 test.describe("Fixture", async () => {
-  test("test with fixture", async ({page, createNewOwner, pageManager, randomFirstName, randomLastName, randomPetName}) => {
-    await createNewOwner;
-
+  test("test with fixture", async ({page, createNewOwner, pageManager}) => {
+    const newOwnerDataFromFixture: OwnerData = createNewOwner;
+    
     await pageManager.getNavigationPage().openOwnersPage();
-    await pageManager.getOwnersPage().selectOwnerByNameAndOpenInformationPage(randomFirstName + " " + randomLastName);
+    await pageManager.getOwnersPage().selectOwnerByNameAndOpenInformationPage(newOwnerDataFromFixture.randomFirstName + " " + newOwnerDataFromFixture.randomLastName);
 
     await pageManager.getOwnerInformationPage().validateOwnerInformationHeader();
 
-    const petInformation = await page.locator("table.table-striped").filter({ hasText: randomPetName });
+    const petInformation = await page.locator("table.table-striped").filter({ hasText: newOwnerDataFromFixture.randomPetName });
     await petInformation.getByRole("button", { name: "Delete Visit" }).click();
     await expect(petInformation.getByRole("button", { name: "Delete Visit" })).not.toBeVisible();
 

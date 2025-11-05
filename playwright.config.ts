@@ -32,4 +32,8 @@ export default defineConfig({
       use: { ...devices['Desktop Firefox'] },
     },
   ],
+  // webServer: {
+  //   command: 'npm run start',
+  //   url: 'https://petclinic.bondaracademy.com'
+  // }
 });

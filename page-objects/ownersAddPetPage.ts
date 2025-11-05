@@ -17,14 +17,11 @@ export class OwnerAddPetPage {
   async fillInBirthDateAndCheckDate() {
     const birthDateInputField = this.page.locator('[name="birthDate"]');
     await this.page.getByLabel("Open calendar").click();
-    await this.page
-      .getByRole("button", { name: "Choose month and year" })
-      .click();
+    await this.page.getByRole("button", { name: "Choose month and year" }).click();
     await this.page.getByRole("button", { name: "Previous 24 years" }).click();
     await this.page.getByText("2014").click();
     await this.page.getByText("MAY").click();
     await this.page.getByText("2", { exact: true }).click();
-
     await expect(birthDateInputField).toHaveValue("2014/05/02");
   }
 
