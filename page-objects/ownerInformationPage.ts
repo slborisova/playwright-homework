@@ -75,8 +75,7 @@ export class OwnerInformationPage {
 
   async validatePetType(petType: string) {
     const petRosySection = this.page.locator("app-pet-list").filter({ hasText: "Rosy" });
-    await expect(petRosySection.locator(".dl-horizontal dd").last()).toHaveText(petType
-    );
+    await expect(petRosySection.locator(".dl-horizontal dd").last()).toHaveText(petType);
   }
 
   async validateOwnerInformationHeader() {
