@@ -11,7 +11,11 @@ export class OwnerInformationPage {
     await this.page.getByRole("button", { name: "Add New Pet" }).click();
   }
 
-  async validateCreatedPet(petName: string, birthDate: string, petType: string) {
+  async validateCreatedPet(
+    petName: string,
+    birthDate: string,
+    petType: string
+  ) {
     const lastPetVisit = this.page.locator("table.table-striped").last().locator("tr td dd");
     await expect(lastPetVisit.first()).toHaveText(petName);
     await expect(lastPetVisit.nth(1)).toHaveText(birthDate);
